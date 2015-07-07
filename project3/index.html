@@ -1,0 +1,702 @@
+<html>
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="UTF-8">
+  <title>State</title>
+  <meta name="description" content="Project 3">
+
+
+
+  <!-- Basic Sources
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="jquery-1.11.2.min.js"></script>
+  <script src="topojson.v1.min.js"></script>
+  <script src="bootstrap.min.js"></script>
+  <script src="d3.tip.v0.6.3.js"></script>
+  <script src ="stateFIPS.js"></script>
+  <script src="RadarChart.js"></script>
+  <script src="tip.js"></script>
+
+
+  <!-- Mobile Specific Metas ///STOP IPHONE SIMULATOR IMAGE RESIZING
+
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link rel="stylesheet" href="bootstrap-theme.min.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/logo.png">
+
+</head>
+<body>
+
+  <style>
+  #map { border: solid black 1px; }
+  svg { background-color: white; }
+  .land { fill: rgb(232, 232, 232); stroke: gray; }
+  .state-boundary { fill: none; stroke: gray; }
+  }
+  </style>
+
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+ <div class="container">
+    <section class="header">
+      <h1 class="title" align="center">Which State Should I Live In</h1>     
+    </div>   
+  </section>
+
+ <div class="container">
+    <section class="header">
+      <h3 align="center">Click on the text with line of dashes to see guidence for each graph</h3>     
+    </div>   
+  </section>
+
+
+<div class="container">
+  <div class="row">
+
+  <h3> <abbr title="Select your prefer range for features below, and then click START to see recommend states(Highlighted with green). Feature description can be shown by clicking the text on top of it. Click on the recommend states to see more details in Radar plot." rel="tooltip">What Do I Care</abbr></h3>
+
+
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="c columns">
+      <label for="L1"><abbr title=" Median Household Income by State:  2012 to 2013 (unit: dollars)" rel="tooltip">Income</abbr></label>
+
+      <select class="u-full-width" id="L1">
+        <option value="1">39000~45000</option>
+        <option value="2">45000~51000</option>
+        <option value="3">51000~57000</option>
+        <option value="4">57000~63000</option>
+        <option value="5">Above 63000</option>
+      </select>
+    </div>
+
+    <div class="c columns">
+      <label for="L2"><abbr title="Personal consumption expenditures: 2012 (unit: dollars)
+" rel="tooltip">Consumption</abbr></label>
+      <select class="u-full-width" id="L2">
+        <option value="1">21000~99600</option>
+        <option value="2">99600~178200</option>
+        <option value="3">178200~256800</option>
+        <option value="4">256800~335400</option>
+        <option value="5">Above 335400</option>
+      </select>
+    </div>
+    <div class="c columns">
+      <label for="L3"><abbr title="Number of state parks in each state." rel="tooltip">State Park</abbr></label>
+      <select class="u-full-width" id="L3">
+        <option value="1">0~26</option>
+        <option value="2">26~52</option>
+        <option value="3">52~78</option>
+        <option value="4">78~104</option>
+        <option value="5">Above 104</option>
+      </select>
+    </div>
+
+<div class="c columns">
+      <label for="L4"><abbr title="The violent crime includes the offenses of murder, rape, robbery, and aggravated assault. The violent crime rate is number of violent crime divided by population in that state." rel="tooltip">Crime
+      </abbr></label>
+      <select class="u-full-width" id="L4">
+        <option value="1">0.1~0.2</option>
+        <option value="2">0.2~0.3</option>
+        <option value="3">0.3~0.4</option>
+        <option value="4">0.4~0.5</option>
+        <option value="5">Above 0.5</option>
+      </select>
+    </div>
+
+<div class="c columns">
+      <label for="L5"><abbr title="Number of schools for Elementary and Secondary Education
+" rel="tooltip">School</abbr></label>
+      <select class="u-full-width" id="L5">
+        <option value="1">200~900</option>
+        <option value="2">900~1600</option>
+        <option value="3">1600~2300</option>
+        <option value="4">2300~3000</option>
+        <option value="5">Above 3000</option>
+      </select>
+    </div>
+
+<div class="c columns">
+      <label for="L6"><abbr title="2012 states’ population density" rel="tooltip">Popdensity</abbr></label>
+      <select class="u-full-width" id="L6">
+        <option value="1">0~160</option>
+        <option value="2">160~320</option>
+        <option value="3">320~480</option>
+        <option value="4">480~640</option>
+        <option value="5">Above 640</option>
+      </select>
+    </div>
+
+<div class="c columns">
+      <label for="L7"><abbr title="Average annual temperature for each state from 1971-2000 (unit: degrees Celsius)." rel="tooltip">Temperature</abbr></label>
+      <select class="u-full-width" id="L7">
+        <option value="1">-3~2</option>
+        <option value="2">2~7</option>
+        <option value="3">7~12</option>
+        <option value="4">12~17</option>
+        <option value="5">Above 17</option>
+      </select>
+    </div>
+</div>
+
+<br><br>
+
+  <div class="row">
+  <div class="c columns">
+          
+       <button class="button-primary" onclick="knn()">START</button>
+  </div>
+  <div class="c columns">
+        <button class="button-primary" onclick= location.reload()>RESET</button>
+  </div>  
+  </div>
+
+
+</div>
+</div>
+<br><br>
+
+<div class="container">
+
+<svg id="map" width="960" height="500"
+    viewBox="0 0 960 500"
+    perserveAspectRatio="xMinYMid">
+</svg>
+
+</div>
+
+<script>
+  var data;
+  var state = new Array();//state will contain the normalized data
+  var feature = ["Income", "Consumption", "StatePark","Crime","School", "Density","Temperature"];
+  var range = [[39000,45000,51000,57000,63000],  [21000,99600,178200,256800,335400],
+               [0,26,52,78,104],  [0.1,0.2,0.3,0.4,0.5], [200,900,1600,2300,3000],  
+               [0,160,320,480,640], [-3,2,7,12,17]
+
+  ];
+
+  var centroids = new Array();
+
+  var user = {};
+
+// attach the .equals method to Array's prototype to call it on any array
+// Reference: http://stackoverflow.com/questions/7837456/comparing-two-arrays-in-javascript
+   Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+    // compare lengths 
+    if (this.length != array.length)
+        return false;
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            
+            return false;   
+        }           
+    }       
+    return true;
+} 
+
+//Attach the finding multi-index element in array
+//Reference: http://stackoverflow.com/questions/24241462/how-to-search-for-multiple-indexes-of-same-values-in-javascript-array
+Array.prototype.multiIndexOf = function (el) { 
+    var idxs = [];
+    for (var i = this.length - 1; i >= 0; i--) {
+        if (this[i] === el) {
+            idxs.unshift(i);
+        }
+    }
+    return idxs;
+};
+
+//Pass Object as value
+//Reference: http://heyjavascript.com/4-creative-ways-to-clone-objects/
+function cloneObject(obj) {
+    if (obj === null || typeof obj !== 'object') {
+        return obj;
+    }
+ 
+    var temp = obj.constructor(); // give temp the original obj's constructor
+    for (var key in obj) {
+        temp[key] = cloneObject(obj[key]);
+    }
+ 
+    return temp;
+}
+
+
+//Initial Map
+//Resize the map based on screen size
+// reference: http://jsfiddle.net/shawnbot/BJLe6/
+var svg1 = $("#map"),
+    aspect = svg1.width() / svg1.height(),
+    container = svg1.parent();
+$(window).on("resize", function() {
+    var targetWidth = container.width();
+    svg1.attr("width", targetWidth);
+    svg1.attr("height", Math.round(targetWidth / aspect));
+}).trigger("resize");
+
+var states;
+var projection = d3.geo.albersUsa();
+var path = d3.geo.path().projection(projection);
+
+
+var svg = d3.select("#map").append("svg")
+
+d3.json("us.json", function(error, us) {
+  states = topojson.feature(us, us.objects.states).features;
+
+
+  svg.insert("path", ".USborder")
+    .datum(topojson.feature(us, us.objects.land))
+    .attr("class", "land")
+    .attr("d", path);
+
+  statePaths = svg.append("g");
+
+  statePaths.selectAll("path").data(states).enter()
+    .append("path").attr("d", path)
+    .style("stroke","#ccc")
+    .style("fill", "#67a9cf")
+}); 
+
+//Functions that contains K-means Clustering and KNN
+function knn() {
+
+  d3.csv("data/data.csv", function(errors, rows){
+
+  data = rows;
+  /*Convert Data*/
+  for(var i=0; i<rows.length-1; i++){
+  state[i] = {};
+  state[i].State = rows[i].State;
+  state[i].FIP = rows[i].FIP;
+
+  for(var j=0; j<feature.length;j++){
+    for(var k=0; k<range[0].length-1; k++){
+    if(Number(rows[i][feature[j]])>=range[j][k] &&  Number(rows[i][feature[j]])<range[j][k+1])
+      state[i][feature[j]] = k+1;
+    else if (Number(rows[i][feature[j]])>=range[j][4])
+      state[i][feature[j]] = 5;
+    }
+   }
+  }
+  
+  /*K-means Cluster*/
+
+  //Each cluster has a centroid
+  //Try different cluster number k and find the k when average changes a little 
+
+  var k=7;// number of clusters
+
+  //select k random instance as seeds, 51 states in total, generate 1-51 random number without 
+  //The results can depend upon the seed points, so often clustering is done several times, starting with different seed points.
+  /*
+  var seed = new Array();// store the index of seed
+  var seedindex;
+  var count = 0;
+  while(count !=k)
+  {
+  seedindex = Math.floor(Math.random() * 51);
+  if (seed.indexOf(seedindex) == -1){
+   seed.push(seedindex);
+   count ++;
+  }   
+  }
+  */
+  //store BEST seed state features into centroids
+  
+  seed = [32, 26, 2, 42, 21, 43, 8];//8, 6, 9, 7, 8, 7, 6
+  
+  var stateClone = cloneObject(state);
+  
+  var centroids = new Array();// Avoid pass object as reference
+
+  for(var i=0; i<k; i++){
+    centroids[i]=stateClone[seed[i]];
+  }
+
+  //Until clustering converges
+  //Cosine similarity was used
+  var cOld = new Array();
+  while(!(centroids.equals(cOld))){ 
+  
+  cOld = centroids;
+  //Assign state to the nearest cluster  
+  state.forEach(function (s) {
+
+    var nearest;
+    var notSimilar = Number.MIN_VALUE;
+    for (var i = 0; i < k; i++) {
+      var c = centroids[i];
+
+      var distance = (c.Consumption * s.Consumption + c.Crime * s.Crime + c.Density * s.Density
+      + c.Income * s.Income + c.School * s.School + c.StatePark * s.StatePark + c.Temperature* s.Temperature)/
+      (Math.sqrt(Math.pow(c.Consumption,2) + Math.pow(c.Crime,2) + Math.pow(c.Density,2) + Math.pow(c.Income,2) + Math.pow(c.School,2) + Math.pow(c.StatePark,2) + Math.pow(c.Temperature,2))* Math.sqrt(Math.pow(s.Consumption,2) + Math.pow(s.Crime,2) + Math.pow(s.Density,2) + Math.pow(s.Income,2) + Math.pow(s.School,2) + Math.pow(s.StatePark,2) + Math.pow(s.Temperature,2)));
+
+      if (distance > notSimilar) {
+        notSimilar = distance;
+        nearest = i;
+      }
+    }
+    s.cluster = nearest;
+
+  });
+  
+  //Update the centriod of each cluster
+  centroids.forEach(function (c, i) {
+    var assignedStates = 
+      state.filter(function (s) { return s.cluster == i; });
+    
+    c.Consumption = d3.mean(assignedStates, function (s) { return s.Consumption; });
+    c.Crime = d3.mean(assignedStates, function (s) { return s.Crime; });
+    c.Density = d3.mean(assignedStates, function (s) { return s.Density; });
+    c.Income = d3.mean(assignedStates, function (s) { return s.Income; });
+    c.School = d3.mean(assignedStates, function (s) { return s.School; });
+    c.StatePark = d3.mean(assignedStates, function (s) { return s.StatePark; });
+    c.Temperature = d3.mean(assignedStates, function (s) { return s.Temperature; });
+
+  });
+ } 
+
+/*test whether cluster number is good*/
+var numState = new Array();//test cluster number good or not
+for(var i=0; i<k; i++){
+  numState[i]=0;
+}
+
+state.forEach(function (s) {
+  numState[s.cluster]++;
+});
+
+
+//////////////////////////////////////////
+
+
+/*Use KNN to find the state that meet the user's use */
+
+var numNeigh = 3; //3NN
+
+var L1 = document.getElementById("L1");
+var L2 = document.getElementById("L2");
+var L3 = document.getElementById("L3");
+var L4 = document.getElementById("L4");
+var L5 = document.getElementById("L5");
+var L6 = document.getElementById("L6");
+var L7 = document.getElementById("L7");
+
+user.Income = Number(L1.options[L1.selectedIndex].value);
+user.Consumption = Number(L2.options[L2.selectedIndex].value);
+user.StatePark = Number(L3.options[L3.selectedIndex].value);
+user.Crime= Number(L4.options[L4.selectedIndex].value);
+user.School =Number(L5.options[L5.selectedIndex].value);
+user.Density = Number(L6.options[L6.selectedIndex].value);
+user.Temperature = Number(L7.options[L7.selectedIndex].value);
+
+
+
+var neighbor = new Array();// store selected cluster value
+var stateN = new Array();//store stateName that has been selected
+
+var nearestNC;//Cluster which contains the nearest neighbor 
+
+for (var i=0; i<numNeigh; i++){
+
+  var stateName=0;
+ 
+  stateKNN = state.filter(function(value){ return stateN.indexOf(value.State) == -1});
+  
+  var notSimilar = Number.MIN_VALUE;
+
+  stateKNN.forEach(function (s) { 
+
+    var distance = (user.Consumption * s.Consumption + user.Crime * s.Crime + user.Density * s.Density
+      + user.Income * s.Income + user.School * s.School + user.StatePark * s.StatePark + user.Temperature* s.Temperature)/
+      (Math.sqrt(Math.pow(user.Consumption,2) + Math.pow(user.Crime,2) + Math.pow(user.Density,2) + Math.pow(user.Income,2) + Math.pow(user.School,2) + Math.pow(user.StatePark,2) + Math.pow(user.Temperature,2))* Math.sqrt(Math.pow(s.Consumption,2) + Math.pow(s.Crime,2) + Math.pow(s.Density,2) + Math.pow(s.Income,2) + Math.pow(s.School,2) + Math.pow(s.StatePark,2) + Math.pow(s.Temperature,2)));
+
+      if (distance > notSimilar) {
+        notSimilar = distance;
+        nearestNC = s.cluster;
+        stateName = s.State;
+      }
+
+  });
+
+  stateN.push(stateName);
+  neighbor.push(nearestNC);
+}
+
+var frequency = new Array(); //store the frequency of cluster appear in neighbor
+
+//index indicates cluster
+for(var i=0; i<k; i++){
+  frequency[i]=0;
+}
+
+for(var j=0; j<neighbor.length; j++){
+  frequency[neighbor[j]]++;
+}
+
+//How to decide which cluster to use--especially when there is a tie
+//when there is a tie, consider their choosing order
+//This part depends on KNN's K value
+var userCluster;// store the cluster used to highlight the map
+var maxVote = Math.max.apply(Math, frequency);
+
+if(maxVote == 1){
+  userCluster = neighbor[0];
+}
+else {
+  userCluster = frequency.indexOf(maxVote);
+}
+
+var userClusterArray = new Array();//store the states' id that are in the cluster
+
+state.forEach(function(s){
+  if(s.cluster == userCluster){
+    userClusterArray.push(Number(s.FIP));
+  }
+});
+
+/* USA Map*/
+d3.json("us.json", function(error, us) {
+  states = topojson.feature(us, us.objects.states).features;
+
+  d3.tsv("us-state-names.tsv", function(tsv){
+    var names = {};
+    tsv.forEach(function(d,i){
+    names[d.id] = d.name; });
+
+  statePaths.selectAll("text").remove();
+
+  svg.insert("path", ".USborder")
+        .datum(topojson.feature(us, us.objects.land))
+        .attr("class", "land")
+        .attr("d", path);
+
+   statePaths = svg.append("g");
+
+   statePaths.selectAll("path").data(states).enter()
+    .append("path").attr("d", path)
+    .style("stroke","#ccc")
+    .style("fill", function(d){
+      if(userClusterArray.indexOf(d.id) > -1 )
+    {return "#74c476";}
+      else {return "#67a9cf";}
+    }) 
+    .on("click", clickMap);
+  
+    statePaths.selectAll("text")
+              .data(states)
+              .enter()
+              .append("text")
+              .text(function(d){ if(userClusterArray.indexOf(d.id) > -1 )
+    return names[d.id];
+  })
+            .attr("x", function(d){ if(userClusterArray.indexOf(d.id) > -1 )
+      return path.centroid(d)[0];
+  })
+  .attr("y", function(d){ if(userClusterArray.indexOf(d.id) > -1 )
+      return  path.centroid(d)[1];
+  })
+  .attr("text-anchor","middle")
+  .attr("fill", "#00000")
+  .on("click", clickMap);    
+
+  function clickMap(d){
+    if(userClusterArray.indexOf(d.id) > -1){
+    var radarPara;
+    state.forEach(function(s){
+      if(d.id == s.FIP)
+      radarPara = s;
+    })
+    //Call radar plot
+    updateChart(radarPara);
+    }        
+  }
+
+
+  });
+       
+  });
+
+});
+
+}
+
+
+</script>
+<br><br>
+ <div class="container">
+  <div class="row">
+
+  <h3> <abbr title="The radar chart displays details of the features for chosen state(s). Click on more states to add them to the chart or click on an already highlighted state in the map to remove the plot. Clicking on legend will highlight/unhighlight the corresponding state of the radar chart. Each feature has 5 ranges corresponding to the selection box in map plot. 1 means the lowest range value, 5 means the highest range" rel="tooltip">State Comparison</abbr></h3>
+
+</div>
+</div>
+<br><br>
+<div class="container">
+
+   <svg id="radar" width="960" height="700"
+   viewBox="0 0 960 700"
+   perserveAspectRatio="xMinYMid meet"> 
+  
+</div>
+
+<script>
+  var w = 500, h = 500;
+  var LegendOptions = [];
+  var LegendToData = {};
+  var colorscale = d3.scale.category10();
+  var radarData = [];
+  var radarStates = {};
+  var mycfg = {
+    maxValue: 5,
+    levels: 5,
+    factor: 0.99,
+    opacityArea: 0.5,
+  }
+  
+  var svg2 = $("#radar"),
+        aspect2 = svg2.width() / svg2.height();
+        container = svg2.parent();
+
+  $(window).on('resize', function(){
+    var targetWidth = container.width();
+    svg2.attr("width", targetWidth);
+    svg2.attr("height", Math.round(targetWidth / aspect2));
+  }).trigger("resize");
+
+  function updateChart(stateObj) {
+    if (radarStates[stateObj.State] === undefined) {
+      var stateList = [];
+      $.each(stateObj, function(index, value) {
+        if (index !== "State" && index !== "cluster" && index !== "FIP") {
+          stateList.push({axis: index, value: value});
+        }
+        
+      });
+      LegendOptions.push(stateObj.State);
+      LegendToData[stateObj.State] = stateList;
+      radarData.push(stateList);
+      radarStates[stateObj.State] = stateList;
+    } else {
+      radarData.splice(radarData.indexOf(radarStates[stateObj.State]), 1);
+      delete radarStates[stateObj.State];
+      LegendOptions.splice(LegendOptions.indexOf(stateObj.State), 1);
+    }
+
+    if (radarData.length != 0)
+      drawChart();
+    else
+      clearRadar();
+  }
+
+  function clearRadar() {
+    LegendOptions = [];
+    LegendToData = {};
+    radarData = [];
+    radarStates = {};
+    $('#radar').css('border', 'none');
+    $('#radar').empty(); 
+  }
+
+  function drawChart() {
+    RadarChart.draw('#radar', radarData, mycfg);
+    var svg = d3.select('#radar').selectAll('svg').append('svg');
+
+    $('#radar').css('border', 'solid black 1px');
+        
+    //Initiate Legend 
+    var legend = svg.append("g")
+      .attr("class", "legend")
+      .attr("height", 100)
+      .attr("width", 200)
+      .attr('transform', 'translate(350,80)') 
+      ;
+      //Create colour squares
+      legend.selectAll('rect')
+        .data(LegendOptions)
+        .enter()
+        .append("rect")
+        .attr("x", w - 65)
+        .attr("y", function(d, i){ return i * 50;})
+        .attr("width", 30)
+        .attr("height", 30)
+        .style("fill", function(d, i){ return colorscale(i);})
+        .on("click", function(d) {
+          // console.log(radarData.indexOf(LegendToData[d]));
+          
+          var z = "polygon.radar-chart-serie" + radarData.indexOf(LegendToData[d]);
+          var g = d3.select('#radar svg g');
+          var highlighted = false;
+          $('#radar svg g polygon').each(function( index, value ) {
+            if ($(value).attr('data-show') === "true")
+              highlighted = true;
+          });
+
+          if (highlighted && g.selectAll(z).attr('data-show') === "true") {
+            g.selectAll("polygon")
+             .transition(200)
+             .style("fill-opacity", mycfg.opacityArea)
+             .attr('data-show', false);
+          } else {
+            g.selectAll("polygon")
+             .transition(200)
+             .style("fill-opacity", 0.1)
+             .attr('data-show', false);
+            g.selectAll(z)
+             .transition(200)
+             .style("fill-opacity", 0.9)
+             .attr('data-show', true);
+           }
+        })
+        ;
+      //Create text next to squares
+      legend.selectAll('text')
+        .data(LegendOptions)
+        .enter()
+        .append("text")
+        .attr("x", w - 32)
+        .attr("y", function(d, i){ return i * 50 + 20;})
+        .attr("font-size", "14px")
+        .attr("fill", "#737373")
+        .text(function(d) { return d; })
+        ;
+     }
+
+
+</script>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

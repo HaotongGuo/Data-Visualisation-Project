@@ -1,0 +1,354 @@
+<html>
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<style>body { font-family: "Open Sans"; } div { margin: 30px; }
+  /*svg { border: solid black 1px; }*/
+	</style>
+</head>
+<body>
+	<div>
+	<svg height="170" width="1200"> 
+		<text
+		x="600" y="50"
+		dominant-baseline = "central"
+        text-anchor="middle"
+        fill= "black"
+        font-family = "sans-serif"
+        font-size   = "32">Web Index Ranking Versus Education</text>
+
+    <text
+    x="600" y="100"
+    dominant-baseline = "central"
+        text-anchor="middle"
+        fill= "black"
+        font-family = "sans-serif"
+        font-size   = "12px">*NOTE: The order of countries in this graph is based on the percentage of population age 15+ with completed secondary schooling.</text>
+
+    <text
+    x="600" y="125"
+    dominant-baseline = "central"
+        text-anchor="middle"
+        fill= "black"
+        font-family = "sans-serif"
+        font-size   = "12px">The height of histogram represents the scores of four indicators that assess the political, economic, social impact as well as  connectivity and infrastructure of the Web.</text>
+    <text
+    x="600" y="150"
+    dominant-baseline = "central"
+        text-anchor="middle"
+        fill= "black"
+        font-family = "sans-serif"
+        font-size   = "12px">Score ranges from 0 to 100, higher score indicates better performance.</text>
+
+    </svg>
+
+    </div>
+
+    <div id="canvas"></div>
+
+	
+		<script>
+    var education;
+    var recttest;
+		d3.json("new_education.json", function(error, data){
+
+		education = data;
+        
+    var svg = d3.select("#canvas").append("svg").style("boarder", "none")
+     	          .attr("height",1300)
+     	          .attr("width",1200);
+
+        
+		var universal = svg.selectAll("rect").data(education).enter().append("rect");
+		universal.attr("x", function(d){return (250+210*((d.edurank-1)%5))})
+		         .attr("y", function(d){return 120+170*(Math.floor((d.edurank-1)/5)) - (d.Universal)})
+		         .attr("height", function(d){return (d.Universal)})
+		         .attr("width", 15)
+		         .style("fill", function(d){
+		         	if (d.Universal<62.95) {return "#99d8c9";}
+		         	else {return "#2ca25f";}
+		         });		
+		
+		var relevant = svg.selectAll("rectr").data(education).enter().append("rect");
+		relevant.attr("x", function(d){return (265+210*((d.edurank-1)%5))})
+		         .attr("y", function(d){return 120+170*(Math.floor((d.edurank-1)/5)) - (d.Relevant)})
+		         .attr("height", function(d){return (d.Relevant)})
+		         .attr("width", 15)
+		         .style("fill", function(d){
+		         	if (d.Relevant<64.62) {return "#bcbddc";}
+		         	else {return "#756bb1";}
+		         });
+
+		var freedom = svg.selectAll("rectf").data(education).enter().append("rect");
+		freedom.attr("x", function(d){return (280+210*((d.edurank-1)%5))})
+		       .attr("y", function(d){return 120+170*(Math.floor((d.edurank-1)/5)) - (d.Freedom)})
+		       .attr("height", function(d){return (d.Freedom)})
+		       .attr("width", 15)
+		       .style("fill", function(d){
+		         	if (d.Freedom<59.25) {return "#fa9fb5";}
+		         	else {return "#dd1c77";}
+		         });
+
+		var impact = svg.selectAll("recti").data(education).enter().append("rect");
+		impact.attr("x", function(d){return (295+210*((d.edurank-1)%5))})
+		      .attr("y", function(d){return 120+170*(Math.floor((d.edurank-1)/5)) - (d.Impact)})
+		      .attr("height", function(d){return (d.Impact)})
+		      .attr("width", 15)
+		      .style("fill", function(d){
+		         	if (d.Impact<48.18) {return "#fdae6b";}
+		         	else {return "#e6550d";}
+		         });
+
+    var scaleline100 = svg.selectAll("line").data(education).enter().append("line");
+    scaleline100.attr("x1", function(d){return (240+210*((d.edurank-1)%5))})
+                .attr("y1", function(d){return 20+ 170*(Math.floor((d.edurank-1)/5))})
+                .attr("x2", function(d){return (250+210*((d.edurank-1)%5))+70})
+                .attr("y2", function(d){return 20+170*(Math.floor((d.edurank-1)/5))})
+                .attr("stroke", "#f03b20")
+                .attr("stroke-width", 2);
+
+    var scaleline50 = svg.selectAll("line1").data(education).enter().append("line");
+    scaleline50.attr("x1", function(d){return (240+210*((d.edurank-1)%5))})
+         .attr("y1", function(d){return 70+ 170*(Math.floor((d.edurank-1)/5))})
+         .attr("x2", function(d){return (250+210*((d.edurank-1)%5))+70})
+         .attr("y2", function(d){return 70+170*(Math.floor((d.edurank-1)/5))})
+         .attr("stroke", "#636363")
+         .attr("stroke-width", 2);
+
+		var country = svg.selectAll("text").data(education).enter().append("text");
+		country.attr("x", function(d){return 280+210*((d.edurank-1)%5)})
+		       .attr("y", function(d){return 145+170*(Math.floor((d.edurank-1)/5))})
+		       .text(function(d){return d.Country})
+		       .attr("font-family", "sans-serif")
+               .attr("font-size", "13px")
+               .attr("fill", "black")
+		       .attr("dominant-baseline","central") 
+		       .attr("text-anchor","middle"); 
+
+    var perc = svg.selectAll("text1").data(education).enter().append("text");
+    perc.attr("x", function(d){return 280+210*((d.edurank-1)%5)})
+        .attr("y", function(d){return 158+170*(Math.floor((d.edurank-1)/5))})
+        .text(function(d){return String(d.AVG) + "%"})
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "10px")
+        .attr("fill", "black")
+        .attr("dominant-baseline","central") 
+        .attr("text-anchor","middle"); 
+
+
+		  /*Legend*/
+    var legendUniversalRL = svg.append("rect");
+    legendUniversalRL.attr("x", 25)
+                     .attr("y", 55)
+                     .attr("width", 50)
+                     .attr("height", 25)
+                     .style("fill","#2ca25f");
+    var legendUniversalRR = svg.append("rect");
+    legendUniversalRR.attr("x", 75)
+                     .attr("y", 55)
+                     .attr("width", 50)
+                     .attr("height", 25)
+                     .style("fill","#99d8c9");
+    var UniversalT = svg.append("text");
+    UniversalT.attr("x", 15)
+        		  .attr("y", 40)
+        		  .attr("font-family", "sans-serif")
+              .attr("font-size", "15px")
+              .attr("fill", "black")
+		          .attr("dominant-baseline","central") 
+		          .attr("text-anchor","middle")
+		          .text("UA");
+
+
+		var legendRelevantRL = svg.append("rect");
+        legendRelevantRL.attr("x", 25)
+                        .attr("y", 125)
+                        .attr("width", 50)
+                        .attr("height", 25)
+                        .style("fill","#756bb1");
+    var legendRelevantRR = svg.append("rect");
+    legendRelevantRR.attr("x", 75)
+                    .attr("y", 125)
+                    .attr("width", 50)
+                    .attr("height", 25)
+                    .style("fill","#bcbddc");
+    var RelevantT = svg.append("text");
+    RelevantT.attr("x", 15)
+        		  .attr("y", 110)
+        		  .attr("font-family", "sans-serif")
+              .attr("font-size", "15px")
+              .attr("fill", "black")
+		          .attr("dominant-baseline","central") 
+		          .attr("text-anchor","middle")
+		          .text("RC");
+
+    var legendFreedomRL = svg.append("rect");
+    legendFreedomRL.attr("x", 25)
+                   .attr("y", 195)
+                   .attr("width", 50)
+                   .attr("height", 25)
+                   .style("fill","#dd1c77");
+
+    var legendFreedomRR = svg.append("rect");
+    legendFreedomRR.attr("x", 75)
+                   .attr("y", 195)
+                   .attr("width", 50)
+                   .attr("height", 25)
+                  .style("fill","#fa9fb5");
+
+    var FreedomT = svg.append("text");
+    FreedomT.attr("x", 15)
+        	  .attr("y", 180)
+        		.attr("font-family", "sans-serif")
+            .attr("font-size", "15px")
+            .attr("fill", "black")
+		        .attr("dominant-baseline","central") 
+		        .attr("text-anchor","middle")
+		        .text("FO");
+
+	   var legendImpactRL = svg.append("rect");
+     legendImpactRL.attr("x", 25)
+                   .attr("y", 265)
+                   .attr("width", 50)
+                   .attr("height", 25)
+                   .style("fill","#e6550d");
+      var legendImpactRR = svg.append("rect");
+      legendImpactRR.attr("x", 75)
+                    .attr("y", 265)
+                    .attr("width", 50)
+                    .attr("height", 25)
+                    .style("fill","#fdae6b");
+      var ImpactT = svg.append("text");
+      ImpactT.attr("x", 15)
+        		 .attr("y", 250)
+        		 .attr("font-family", "sans-serif")
+             .attr("font-size", "15px")
+             .attr("fill", "black")
+		         .attr("dominant-baseline","central") 
+		         .attr("text-anchor","middle")
+		         .text("IE");
+
+      var noteAvgA = svg.append("text");
+      noteAvgA.attr("x", 50)
+        		  .attr("y", 305)
+        		  .attr("font-family", "sans-serif")
+              .attr("font-size", "12px")
+              .attr("fill", "black")
+		          .attr("dominant-baseline","central") 
+		          .attr("text-anchor","middle")
+		          .text("Above");
+
+      var noteAvgAa = svg.append("text");
+      noteAvgAa.attr("x", 45)
+        		   .attr("y", 319)
+        		   .attr("font-family", "sans-serif")
+               .attr("font-size", "12px")
+               .attr("fill", "black")
+		           .attr("dominant-baseline","central") 
+		           .attr("text-anchor","middle")
+		           .text("Average");
+
+
+
+		 var noteAvgB = svg.append("text");
+     noteAvgB.attr("x", 100)
+        		 .attr("y", 305)
+        	   .attr("font-family", "sans-serif")
+             .attr("font-size", "12px")
+             .attr("fill", "black")
+		         .attr("dominant-baseline","central") 
+		         .attr("text-anchor","middle")
+		         .text("Below");
+
+
+		 var noteAvgBb = svg.append("text");
+     noteAvgBb.attr("x", 105)
+        		  .attr("y", 319)
+        		  .attr("font-family", "sans-serif")
+              .attr("font-size", "12px")
+              .attr("fill", "black")
+		          .attr("dominant-baseline","central") 
+		          .attr("text-anchor","middle")
+		          .text("Average");
+
+      var noteHundred =  svg.append("text");
+      noteHundred.attr("x", 10)
+                 .attr("y", 365)
+                 .attr("font-family", "sans-serif")
+                 .attr("font-size", "12px")
+                 .attr("fill", "black")
+                 .text("100 Score");
+
+      var noteFifty =  svg.append("text");
+      noteFifty.attr("x", 10)
+               .attr("y", 385)
+               .attr("font-family", "sans-serif")
+               .attr("font-size", "12px")
+               .attr("fill", "black")
+               .text("50 Score");
+
+      var hundred = svg.append("line");
+      hundred.attr("x1", 80 )
+             .attr("y1", 360)
+             .attr("x2", 140)
+             .attr("y2",360)
+             .attr("stroke", "#f03b20")
+             .attr("stroke-width", 2);
+
+
+      var fifty = svg.append("line");
+      fifty.attr("x1", 80 )
+           .attr("y1", 380)
+           .attr("x2", 140)
+           .attr("y2",380)
+           .attr("stroke", "#636363")
+           .attr("stroke-width", 2);
+
+  	  var UA = svg.append("text");
+      UA.attr("x", 10)
+        .attr("y", 425)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px")
+        .attr("fill", "black")
+		    .text("UA: Universal Access");
+
+		  var RC = svg.append("text");
+      RC.attr("x", 10)
+        .attr("y", 440)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px")
+        .attr("fill", "black")
+		    .text("RC: Relevant Content");
+		  
+      var FO = svg.append("text");
+      FO.attr("x", 10)
+        .attr("y", 455)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px")
+        .attr("fill", "black")
+        .text("FO: Freedom and Openning");
+		
+      var IE = svg.append("text");
+      IE.attr("x", 10)
+        .attr("y", 470)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px")
+        .attr("fill", "black")
+		    .text("IE: Impact and Empowerment");
+
+		
+      var NOTEa = svg.append("text");
+      NOTEa.attr("x", 700)
+           .attr("y", 1200)
+        	 .attr("font-family", "sans-serif")
+           .attr("font-size", "12px")
+           .attr("fill", "black")
+           .attr("dominant-baseline","central") 
+		       .attr("text-anchor","middle")
+		       .text("Data from database: Education Statistics: Education Attainment & 2013 World Wide Web Foundation");
+		   });
+
+</script>
+	
+</body>
+</html>
